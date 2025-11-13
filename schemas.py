@@ -12,7 +12,7 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Literal
 
 # Example schemas (replace with your own):
 
@@ -37,6 +37,47 @@ class Product(BaseModel):
     price: float = Field(..., ge=0, description="Price in dollars")
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
+
+# Police analytics specific schemas
+
+class Incident(BaseModel):
+    """
+    Incidents collection schema
+    Collection name: "incident"
+    """
+    incident_id: Optional[str] = Field(None, description="External or human-readable ID")
+    type: Literal[
+        "theft",
+        "assault",
+        "burglary",
+        "fraud",
+        "vandalism",
+        "traffic",
+        "narcotics",
+        "homicide",
+        "disturbance",
+        "other",
+    ] = Field("other", description="Incident category")
+    description: Optional[str] = Field(None, description="Short description")
+    severity: Literal["low", "medium", "high", "critical"] = Field(
+        "medium", description="Severity level"
+    )
+    status: Literal["reported", "dispatched", "on_scene", "resolved", "closed"] = Field(
+        "reported", description="Current status"
+    )
+    latitude: Optional[float] = Field(None, ge=-90, le=90, description="Latitude")
+    longitude: Optional[float] = Field(None, ge=-180, le=180, description="Longitude")
+    occurred_at: Optional[str] = Field(
+        None, description="ISO datetime string when incident occurred"
+    )
+    reported_at: Optional[str] = Field(
+        None, description="ISO datetime string when incident was reported"
+    )
+    response_minutes: Optional[float] = Field(
+        None, ge=0, description="Minutes from report to on-scene"
+    )
+    precinct: Optional[str] = Field(None, description="Precinct or station name/code")
+    officer_id: Optional[str] = Field(None, description="Primary officer ID")
 
 # Add your own schemas here:
 # --------------------------------------------------
